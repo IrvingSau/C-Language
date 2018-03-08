@@ -5,7 +5,7 @@
 int main() 
 { 
 	Node *head = 0;
-	for(int i=0; i<0; i++)
+	for(int i=0; i<5; i++)
 		InsertNode(&head, i, i);
 
 	DisplayList(head);
@@ -22,10 +22,9 @@ int main()
 		else
 			printf("%d is not in the list.\n", i);
 	}
-	//DeleteNode(&head, 0);
-	//DisplayList(head);
-	//DestroyList(head);
-
+	DeleteNode(&head, 0);
+	DisplayList(head);
+	DestroyList(head);
 }  
 
 bool isEmpty(Node* head){
@@ -38,7 +37,7 @@ bool isEmpty(Node* head){
 Node* InsertNode(Node** phead, int index, double x){
 	if(index < 0) return 0;//Handle Exception
 
-	int currIndex = 0;//Initialize the currIndex
+	int currIndex = 1;//Initialize the currIndex
 
 	Node* currNode = *phead;//Let currNode point to the first node of LinkedList
 
@@ -85,40 +84,55 @@ int FindNode(Node* head, double x){
 }
 
 int DeleteNode(Node** phead, double x){
-	
+	//Handle exception
 	if(*phead == NULL){
 		printf("The list is empty.");
 		return 0;
 	}
 
 	Node* priorNode = *phead;
-	Node* currNode = priorNode->next;
-	
-	int currIndex = 0;
+	Node* targetNode;
 
-	//Fine the node we want to delete
-	while(currNode->data != x && currNode){
+	int priorIndex = 1;
+
+	//Fine the predesessor of the target node we want to delete
+	while(priorIndex < FindNode(*phead, x) - 1){
+		priorIndex++;
 		priorNode = priorNode->next;
-		currIndex++;
 	}
 
-	//if we want to delete, we need to make precessor->next = sucessor->next
-	priorNode->next = currNode->next;
-	//free(currNode);
+	//Confirm the target node that we want to delete
+	targetNode = priorNode->next;
 
-	currNode = NULL;
+	//Judge if the target node is the last node in the linked list
+	if(targetNode->next == NULL){
+		priorNode ->next = NULL;
+		free(targetNode);
+	}else{
+		priorNode->next = targetNode->next;
+		free(targetNode);
+	}
+
+	//make sure the target index is right(target index is one more than prior index)
+	int currIndex = priorIndex+1;
 
 	return currIndex;
 }
 
 void DisplayList(Node* head){
 	Node* currNode = head;
-	//do{
-	//	printf("%lf", currNode->data);
-	//	currNode = currNode->next;
-	//}while(currNode->next != 0);
 	while(currNode != NULL){
 		printf("%lf\n", currNode->data);
 	 	currNode = currNode->next;
+	}
+}
+
+void DestroyList(Node* head){
+	Node* currNode = head;
+	Node* temp;
+	while(currNode){
+		temp = currNode;
+		currNode = currNode->next;
+		free(temp);
 	}
 }
